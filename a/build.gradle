@@ -151,7 +151,7 @@ dependencies {
         exclude  group: 'org.bouncycastle' , module: 'bcprov-jdk15on'
     }
     compile group:'org.keycloak', name: 'keycloak-adapter-core', version: '15.0.0'
-    compile group:'org.keycloak', name:'keycloak-adapter-spi',version:'15.0.0'
+    compile group:'org.keycloak', name:'keycloak-adapter-spi',version:'15.1.1'
     compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
     compile "io.jsonwebtoken:jjwt:${jjwt_version}"
