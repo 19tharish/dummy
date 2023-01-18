@@ -153,7 +153,7 @@ dependencies {
     compile group:'org.keycloak', name: 'keycloak-adapter-core', version: '15.0.0'
     compile group:'org.keycloak', name:'keycloak-adapter-spi',version:'15.0.0'
     compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
-    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
     compile "io.jsonwebtoken:jjwt:${jjwt_version}"
     compile "org.jboss.resteasy:resteasy-client:${rest_easy_client}"
     compile "org.apache.commons:commons-lang3:${commons_lang_version}"
