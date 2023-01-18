@@ -179,7 +179,7 @@ dependencies {
     compile ("commons-validator:commons-validator:${commons_validator_version}"){
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
-    compile group:'org.json', name: 'json', version: '20180813'
+    compile group:'org.json', name: 'json', version: '20220924'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
     compile('org.springframework.cloud:spring-cloud-starter-config') {
         exclude group: 'org.springframework.security', module:'spring-security-crypto'
