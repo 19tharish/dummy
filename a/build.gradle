@@ -1,0 +1,290 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.12.RELEASE'
+        springCloudVersion = 'Finchley.SR1'
+	}
+	repositories {
+        maven { 
+         url "https://artifactory.example.net/artifactory/my-maven-virtual"
+         credentials {
+                username artifactoryUsername
+                password artifactoryPassword
+            }
+        }
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+apply from: '../gradle/publish.gradle'
+apply from: '../gradle/sonar.gradle'
+apply from: '../gradle/jacoco.gradle'
+apply plugin: 'org.owasp.dependencycheck'
+
+sourceCompatibility = 1.8
+targetCompatibility=1.8
+
+
+dependencyCheck {
+    analyzers {
+        assemblyEnabled = false
+    }
+}
+
+
+ext {
+    solrHome = "$projectDir/src/main/solrhome"
+    solrData = "$projectDir/solr-data"
+}
+
+repositories {
+    maven { 
+         url "https://artifactory.example.net/artifactory/my-maven-virtual"
+         credentials {
+                username artifactoryUsername
+                password artifactoryPassword
+            }
+        }
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+configurations {
+	providedRuntime
+    compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+}
+
+dependencies {
+    compile "org.eclipse.jetty.aggregate:jetty-all:${jetty_version}:uber@jar"
+    compile project(':myapp-core')
+	compile 'org.springframework.boot:spring-boot-starter-actuator'
+	compile 'org.springframework.boot:spring-boot-starter-security'
+    compile ("org.springframework.boot:spring-boot-starter-web") {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    compile ('org.springframework.boot:spring-boot-starter-undertow'){
+        exclude group: 'io.undertow', module: 'undertow-core'
+    }
+    compile 'io.undertow:undertow-core:2.2.5.Final'
+    compile 'org.springframework.boot:spring-boot-starter-hateoas'
+    compile "org.springframework.security:spring-security-core:${spring_security_version}"
+    compile "org.springframework.security:spring-security-config:${spring_security_version}"
+    compile "org.springframework.security:spring-security-data:${spring_security_version}"
+    compile "org.springframework.security:spring-security-web:${spring_security_version}"
+    compile "org.springframework.security:spring-security-crypto:${spring_security_version}"
+    compile ("org.springframework.data:spring-data-solr:${spring_data_solr_version}"){
+            exclude group: 'org.eclipse.jetty'
+            exclude group:'org.eclipse.jetty.http2'
+            exclude group: 'commons-fileupload'
+            exclude group: 'io.netty'
+            exclude module: 'solr-solrj'
+    }
+    compile ("org.apache.solr:solr-core:${solr_core_version}") {
+        exclude group: 'org.eclipse.jetty'
+        exclude group: 'org.eclipse.jetty.http2'
+        exclude group: 'commons-fileupload'
+        exclude group: 'io.netty'
+        exclude group: 'org.yaml'
+        exclude module: 'netty-codec'
+        exclude module: 'solr-solrj'
+        exclude group: 'org.apache.logging.log4j'
+    }
+    
+    implementation('org.yaml:snakeyaml'){
+         version {
+            require '1.29'
+            reject '1.23'
+            prefer '1.29'
+        }
+    }
+    implementation('io.netty:netty-codec'){
+         version {
+            require '4.1.72.Final'
+            reject '4.1.45.Final'
+            prefer '4.1.72.Final'
+        }
+    }
+    implementation('io.netty:netty-transport'){
+         version {
+            require '4.1.72.Final'
+            reject '4.1.45.Final'
+            prefer '4.1.72.Final'
+        }
+    }
+    implementation('io.netty:netty-buffer'){
+         version {
+            require '4.1.72.Final'
+            reject '4.1.45.Final'
+            prefer '4.1.72.Final'
+        }
+    }
+    implementation('io.netty:netty-common'){
+         version {
+            require '4.1.72.Final'
+            reject '4.1.45.Final'
+            prefer '4.1.72.Final'
+        }
+    }
+    implementation('io.netty:netty-resolver'){
+         version {
+            require '4.1.72.Final'
+            reject '4.1.45.Final'
+            prefer '4.1.72.Final'
+        }
+    }
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+    compile ("org.apache.solr:solr-solrj:${solr_solrj_version}"){
+        exclude group: 'io.netty'
+        exclude group: 'org.eclipse.jetty'
+        exclude group: 'org.eclipse.jetty.http2'
+    }
+    compile ("org.keycloak:keycloak-authz-client:${keycloak_client_version}"){
+        exclude  group: 'org.bouncycastle' , module: 'bcprov-jdk15on'
+    }
+    compile group:'org.keycloak', name: 'keycloak-adapter-core', version: '15.0.0'
+    compile group:'org.keycloak', name:'keycloak-adapter-spi',version:'15.0.0'
+    compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
+    compile "io.jsonwebtoken:jjwt:${jjwt_version}"
+    compile "org.jboss.resteasy:resteasy-client:${rest_easy_client}"
+    compile "org.apache.commons:commons-lang3:${commons_lang_version}"
+
+
+    compile "com.squareup.retrofit2:converter-gson:${retrofit_version}"
+    compile "com.squareup.retrofit2:converter-scalars:${retrofit_version}"
+    implementation('com.squareup.okhttp3:logging-interceptor'){
+         version {
+            require "${logging_interceptor_version}"
+            reject '3.8.1'
+            prefer "${logging_interceptor_version}"
+        }
+    }
+    implementation('com.squareup.okhttp3:okhttp'){
+         version {
+            require "${logging_interceptor_version}"
+            reject '3.8.1'
+            prefer "${logging_interceptor_version}"
+        }
+    }
+    compile "javax.inject:javax.inject:${javax_inject_version}"
+    compile ("commons-validator:commons-validator:${commons_validator_version}"){
+        exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+    compile group:'org.json', name: 'json', version: '20180813'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+    compile('org.springframework.cloud:spring-cloud-starter-config') {
+        exclude group: 'org.springframework.security', module:'spring-security-crypto'
+    }
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.10.8'
+    compile group: 'net.minidev', name: 'json-smart', version: '2.4.7'
+    compile ("org.eclipse.jetty.http2:http2-http-client-transport:${jetty_version}"){
+        exclude group: 'org.eclipse.jetty'
+        exclude group: 'org.eclipse.jetty.http2'
+    }
+   /* compile ("org.springframework.boot:spring-boot-starter-data-jpa:${spring_data_boot_jpa_version}"){
+        exclude group: 'org.dom4j'
+        exclude group: 'org.yaml'
+        exclude group: 'io.netty'
+        exclude module: 'spring-boot-starter-aop'
+    }
+    compile ('org.springframework.boot:spring-boot-starter-aop:2.1.12.RELEASE'){
+        exclude module: 'hibernate-core'
+    }*/
+    compile 'org.hibernate:hibernate-core:5.4.24.Final'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile 'org.springframework.security:spring-security-test'
+    testCompile "org.codehaus.groovy:groovy-all:${groovy_all_version}"
+    testCompile "org.spockframework:spock-spring:${spock_spring_version}"
+    testCompile ("org.spockframework:spock-core:${spock_core_version}") {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+//    testCompile "org.grails:grails-plugin-testing:${grails_pligin_testing_version}"
+    testCompile "cglib:cglib-nodep:${cglib_nodep_version}"
+    testCompile "junit:junit:${junit_version}"
+}
+
+task buildSolrHome(type: Copy) {
+    from "$projectDir/src/main/solrHome"
+    into "$buildDir/resources/solrHome"
+}
+
+task solrHomeZip(type: Zip, dependsOn: buildSolrHome) {
+    classifier = 'solrHome'
+
+    from "$buildDir/resources/solrHome"
+    into 'solrHome'
+}
+
+task copyDependencies(type: Copy) {
+    from allprojects.collect {configurations.runtime {
+        exclude "myapp-*"
+    }
+    }
+    into "${project(':').projectDir}/dependencies"
+}
+
+assemble.dependsOn solrHomeZip
+
+bootWar {
+    dependsOn ':myapp-ui:buildClient'
+
+    from ("../myapp-ui/build/main/static") {
+        into 'WEB-INF/classes/static'
+    }
+}
+
+bootRun {
+    ext.VSC_HOME = "$projectDir"
+    systemProperty 'VSC_HOME', "${VSC_HOME}"
+    systemProperty "solr.solr.home", solrHome
+    systemProperty "solr.data.dir", solrData
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact bootWar
+            artifact solrHomeZip
+        }
+    }
+}
+
+test {
+    include '**/*Spec*'
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.enabled = true
+
+    systemProperty "solr.solr.home", "$projectDir/src/main/solrHome"
+    systemProperty "solr.data.dir", temporaryDir
+}
+
+sonarqube {
+    properties {
+
+        property "sonar.projectKey", "APITestLabs:myapp-service"
+        property "sonar.projectName", "app Catalog Service"
+
+        if (pullRequest != null) {
+            property "sonar.analysis.mode", "preview"
+
+
+        }
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
