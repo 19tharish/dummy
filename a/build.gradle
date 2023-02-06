@@ -199,7 +199,7 @@ dependencies {
     compile ('org.springframework.boot:spring-boot-starter-aop:2.1.12.RELEASE'){
         exclude module: 'hibernate-core'
     }*/
-    compile 'org.hibernate:hibernate-core:5.4.24.Final'
+    compile 'org.hibernate:hibernate-core:5.6.15.Final'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'org.springframework.security:spring-security-test'
     testCompile "org.codehaus.groovy:groovy-all:${groovy_all_version}"
