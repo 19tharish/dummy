@@ -141,7 +141,7 @@ dependencies {
             prefer '4.1.72.Final'
         }
     }
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
     compile ("org.apache.solr:solr-solrj:${solr_solrj_version}"){
         exclude group: 'io.netty'
         exclude group: 'org.eclipse.jetty'
