@@ -74,7 +74,7 @@ dependencies {
     compile ('org.springframework.boot:spring-boot-starter-undertow'){
         exclude group: 'io.undertow', module: 'undertow-core'
     }
-    compile 'io.undertow:undertow-core:2.2.5.Final'
+    compile 'io.undertow:undertow-core:2.3.18.Final'
     compile 'org.springframework.boot:spring-boot-starter-hateoas'
     compile "org.springframework.security:spring-security-core:${spring_security_version}"
     compile "org.springframework.security:spring-security-config:${spring_security_version}"
